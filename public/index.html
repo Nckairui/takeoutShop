@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>硅谷外卖</title>
+    <!-- 清除默认样式 -->
+    <link rel="stylesheet" href="./reset.css">
+    <!-- 引入图标字体 -->
+    <link rel="stylesheet" href="./asset/iconfont/iconfont.css">
+    <style>
+      html,body{
+        width: 100%;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+
+    <script type="text/javascript">
+    //原生的移动端rem适配
+    //封装成函数
+    // function remRefresh(){
+    //   //1.获取当前屏幕的宽度 
+    //   let clientWidth = document.documentElement.clientWidth
+    //   console.log(clientWidth)
+    // //2.将屏幕宽度十等分  目的 1.降低单位rem的大小便于换算  2.提高计算的精确度
+    //   let rem = clientWidth / 10
+    // //3.设置根标签的font-size大小
+    //  document.documentElement.style.fontSize = rem + 'px';
+    //  //4.需要给body设置字体大小 因为如果不设置 下面没设置rem的字体如果设置em 会找父元素 有可能会找到html的字体大小
+    //  //这时只让他找到body的字体就行
+    //  document.body.fontSize = '16px';
+    // }
+ 
+    // //页面加载时事件(只要页面重新加载就会调用)
+    // window.addEventListener('pageshow',()=>{
+    
+    //       remRefresh();
+         
+    // })
+    // let time;
+    // //页面窗口大小改变 自动重新获取获取设置
+    // window.addEventListener('resize',()=>{
+      
+    //   //注意 如果用户一直拖动改变页面大小 重复操作 需要在最后延迟300毫秒只取最后一次操作
+    //   //使用函数防抖
+    //   //函数节流 是固定时间 内只能完成一次
+    //   //函数防抖 是不限时间 不限次数 但是只取最后一次的操作
+
+    //   //每次触发事件 调用回调 先取消上一次的任务 (判断一下有没有这个任务)
+    //   //!!time 是取反之后变为布尔值(其实原来就是undefined隐式转换成的布尔值 这个是手动转换一下)
+    //   //再取反 变回原来状态的布尔值
+    //   !!time && clearTimeout(time);
+
+    //   time = setTimeout(() => {
+    //       remRefresh();
+    //     }, 300);
+    //   })
+    </script>
+  </body>
+</html>
