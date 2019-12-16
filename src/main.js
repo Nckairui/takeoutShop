@@ -3,13 +3,10 @@ import App from './App.vue'
 import router from './router' // 引入路由器 
 import 'lib-flexible' // flexible会自动根据设备情况动态设置rem的值的大小
 import store from './vuex/store' // 注册store
+import './validate' //引入validate验证器 只是让他执行一次 
+import Star from './components/Star/Star'
 
-
-
-
-
-
-
+Vue.component('Star',Star); //全局注册组件
 Vue.config.productionTip = false;// 不显示 不是生产模式的提示
 
 new Vue({

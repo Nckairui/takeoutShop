@@ -11,3 +11,4 @@ export const reqFoodCategoryList = () => axios.get('/index_category')
 
 //3、根据经纬度获取商铺列表
 export const reqShopList = ({latitude,longitude})=> axios.get('/shops',{params:{latitude,longitude}})
+

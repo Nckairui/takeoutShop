@@ -10,6 +10,7 @@
 
 import axios from 'axios';
 import qs from 'qs' //query-string 可以将json参数变为urlencoded参数的库
+import { Indicator } from 'mint-ui'; //引入mint-ui组件
 
 
 const instance = axios.create({
@@ -19,6 +20,7 @@ const instance = axios.create({
 
 //请求拦截器
 instance.interceptors.request.use((config)=>{
+  Indicator.open() //请求时展示loading效果
   //config 是请求时的配置对象 请求时包含的所有信息数据都在config中
   //将拦截下来的config中的data请求体参数转变成urlencoded类型参数 因为服务器没设置处理json类型的参数
   const data = config.data
@@ -29,13 +31,14 @@ instance.interceptors.request.use((config)=>{
   return config;//需要return出config才能发出请求
 })
 
-//响应拦截器
+//响应拦截器 
 instance.interceptors.response.use(
   response=>{
+    Indicator.close(); // 成功时关闭loading效果
     return response.data
   },
   error=>{
-
+    Indicator.close(); // 失败时关闭loading效果
     //拦截下来 统一处理异常
     alert('请求失败'+error.message);
     return new Promise(()=>{}) //返回一个pendding状态的promise 中断promise链 

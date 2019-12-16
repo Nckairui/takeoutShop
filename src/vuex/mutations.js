@@ -9,7 +9,7 @@ export default {
   [SET_CATEGORYS](state,categorys){
     state.categorys = categorys;
   },
-  [SET_SHOPS](){
+  [SET_SHOPS](state,shops){
     state.shops = shops;
   }
 }
