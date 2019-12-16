@@ -3,19 +3,19 @@
     <div class="footer-nav">
       <span class="footer-item" :class="{on:$route.path === '/msite'}" @click="goto('/msite')">
         <i class="iconfont icon-waimai"></i>
-        <span>首页</span>
+        <span>{{$t('msite')}}</span>
       </span>
       <span class="footer-item" :class="{on:$route.path === '/search'}" @click="goto('/search')">
         <i class="iconfont icon-sousuo"></i>
-        <span>搜索</span>
+        <span>{{$t('search')}}</span>
       </span>
       <span class="footer-item" :class="{on:$route.path === '/order'}" @click="goto('/order')">
         <i class="iconfont icon-dingdan"></i>
-        <span>订单</span>
+        <span>{{$t('order')}}</span>
       </span>
       <span class="footer-item" :class="{on:$route.path === '/profile'}" @click="goto('/profile')">
         <i class="iconfont icon-geren"></i>
-        <span>个人</span>
+        <span>{{$t('profile')}}</span>
       </span>
     </div>
   </footer>

@@ -2,17 +2,17 @@
   <section class="profile">
     <Header title="我的"></Header>
     <section class="profile-number">
-      <a href="javascript:" class="profile-link" @click="$router.push('/login')">
+      <a href="javascript:" class="profile-link" @click="$router.push(user._id?'/userinfo':'/login')">
         <div class="profile_image">
           <i class="iconfont icon-person"></i>
         </div>
         <div class="user-info">
-          <p class="user-info-top">登录/注册</p>
-          <p>
+          <p class="user-info-top" v-if="!user.phone">{{user.name?user.name:'登录/注册'}}</p>
+          <p v-if="!user.name">
             <span class="user-icon">
               <i class="iconfont icon-shouji icon-mobile"></i>
             </span>
-            <span class="icon-mobile-number">暂无绑定手机号</span>
+            <span class="icon-mobile-number" >{{user.phone?user.phone:'暂无绑定手机号'}}</span>
           </p>
         </div>
         <span class="arrow">
@@ -93,9 +93,14 @@
 
 <script type="text/ecmascript-6">
   import Header from '../../components/Header/Header';
+  import {mapState} from 'vuex'
   export default {
     components:{
       Header
+    },
+    computed:{
+      //从状态里面读取数据
+      ...mapState(['user','token'])
     }
   }
 </script>
@@ -104,6 +109,7 @@
   @import '../../common/stylus/mixins.styl'
   .profile //我的
     width 100%
+    overflow hidden
     .header
       background-color #02a774
       position fixed

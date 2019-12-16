@@ -36,7 +36,7 @@ VeeValidate.Validator.extend('password', {
 })
 VeeValidate.Validator.extend('code', {
   validate: value => {
-    return /^[a-zA-Z0-9]{4}$/.test(value)
+    return /./.test(value)
   },
-  getMessage: field => field + '必须是4位字符'
+  getMessage: field => field + '必须填写'
 })

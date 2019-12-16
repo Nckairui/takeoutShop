@@ -14,8 +14,8 @@
             <section class="login_message">
               <input type="tel" maxlength="11" placeholder="手机号" v-model="myPhone" name="myPhone" v-validate="'required|phone'">
               <span style="color: red;" v-show="errors.has('myPhone')">{{ errors.first('myPhone') }}</span>
-              <button :disabled="!isRightPhoneNumber" class="get_verification" 
-              :class="{right_phone_number:isRightPhoneNumber}" @click.prevent="sendCode">{{isSendCode?`短信已发送(${codeTime}s)`:'发送验证码'}}</button>
+              <button :disabled="!isRightPhoneNumber || codeTime > 0" class="get_verification" 
+              :class="{right_phone_number:isRightPhoneNumber}" @click.prevent="sendCode">{{codeTime > 0?`短信已发送(${codeTime}s)`:'发送验证码'}}</button>
             </section>
             <section class="login_verification">
               <input type="tel" maxlength="8" placeholder="验证码" v-model="myCodeSms" name="myCodeSms" v-validate="'required|code'">
@@ -46,14 +46,15 @@
                 <input type="text" maxlength="11" placeholder="验证码"
                 v-model="myCode" name="myCode" v-validate="'required|code'">
                 <span style="color: red;" v-show="errors.has('myCode')">{{ errors.first('myCode') }}</span>
-                <img class="get_verification" src="./images/captcha.svg" alt="captcha">
-                
+                <img class="get_verification" src="/api/captcha" alt="captcha" @click="reGetCaptcha" ref="captcha">
               </section>
             </section>
           </div>
           <button class="login_submit" @click.prevent="login">登录</button>
         </form>
-        <a href="javascript:;" class="about_us">关于我们</a>
+        <a href="javascript:;" class="about_us">{{$t('about_us')}}</a>
+        <br/>
+        <mt-button size="small" @click="toggleLocale">切换语言</mt-button>
       </div>
       <a href="javascript:" class="go_back" @click="$router.back()">
         <i class="iconfont icon-jiantou2"></i>
@@ -63,19 +64,22 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { Toast, MessageBox } from 'mint-ui';
+  import router from '../../router'
   export default {
     data(){
       return{
         //定义一个标志 用来判断是否加on也就是动态切换时密码登录还是短信登录
-        isPwdLogin:'',
+        isPwdLogin:true,
         isShowPwd:false, //点击切换是否能直接看见密码 默认是false
         myPhone:'',//获取手机号 
         myCodeSms:'',//短信验证码
         myUsername:'',//用户名
         myPassword:'',//密码
         myCode:'',//验证码
-        codeTime:10,//倒计时验证时间
+        codeTime:0,//倒计时验证时间
         isSendCode:false,//是否已经发送验证码
+        nowGet:false // 用于节流 固定时间内改为true 函数看到true就return 定时器到了之后改为false
 
       }
     },
@@ -87,23 +91,30 @@
     },
     methods:{
       //发送验证码
-      sendCode(){
-        let interval
-        if(this.isSendCode) return
-        this.codeTime = 10;
-        this.isSendCode = true;
+     async sendCode(){
+        this.codeTime = 10;  
         //动态减少时间的效果
-      interval = setInterval(() => {
+       let interval = setInterval(() => {
          this.codeTime--;
-          if(this.codeTime == 0){
-            this.isSendCode = false  
+          if(this.codeTime <= 0){
             clearInterval(interval)
           }
        }, 1000);
+       //请求发送验证码
+        const result = await this.$API.reqSendCode(this.myPhone);
+        if(result.code === 0){
+          //成功
+          Toast('短信发送成功');
+        }else{
+          //停止计时
+          this.codeTime = 0;
+          MessageBox('提示', msg || '短信发送失败');
+        }
       },
      async login(){
         //点击登录 向后台发请求验证信息
         let success;
+        let result;
         //首先需要将指定的表单验证一遍 判断是短信登录还是密码登录 要验证的表单不同
         if(this.isPwdLogin){
           //密码登录
@@ -112,15 +123,58 @@
             //只是拿到的success 是true 验证成功 还是 false 验证失败
             if(success){
               //发请求
+            result  = await this.$API.reqLoginByPwd({name:this.myUsername,pwd:this.myPassword,captcha:this.myCode})
+            const {code,data,msg} = result
+            if(code === 0){
+              //登录成功 将data中的用户信息 与 token存入state中 
+              this.$store.dispatch('saveUser',data);
+              //跳转到个人中心
+              router.replace('/profile')
+            }else{
+              MessageBox('提示',msg || '登录失败,请重试')
+            }
             }
        }else{
           //短信登录
            success = await this.$validator.validateAll(['myPhone','myCodeSms']) // 对指定的所有表单项进行验证
           if(success){
               //发请求
+                // myPhone:'',//获取手机号 
+                // myCodeSms:'',//短信验证码
+                // myUsername:'',//用户名
+                // myPassword:'',//密码
+                // myCode:'',//验证码
+               result = await this.$API.reqLoginBySms({phone:this.myPhone,code:this.myCodeSms})         
+              const {code,data,msg} = result
+               if(code === 0){
+              //登录成功 将data中的用户信息 与 token存入state中 
+              this.$store.dispatch('saveUser',data);
+              //跳转到个人中心
+              router.replace({path:'/profile'});
+              
+            }else{
+              MessageBox('提示',msg || '登录失败,请重试')
+            }
             }
         }
         
+        
+      },
+      //切换语言(国际化)
+      toggleLocale(){
+        const locale = this.$i18n.locale == 'en'?'zh_CN':'en'
+        this.$i18n.locale = locale;
+        localStorage.setItem('locale_key', locale)
+      },
+      //重新获取验证码
+      reGetCaptcha(){ //注意也是请求同一个地址 但必须不同(需要参数不同 这个参数随便写 不一定用)
+        //可以设置函数节流 固定时间内 不能请求第二次
+        if(this.nowGet) return
+        this.nowGet = true;
+         setTimeout(() => {
+            this.$refs.captcha.src = "http://localhost:4000/captcha?time="+Date.now();
+            this.nowGet = false;
+         }, 2000);
       }
     }
   }

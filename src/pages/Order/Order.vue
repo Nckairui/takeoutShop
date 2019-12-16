@@ -22,6 +22,7 @@
 <style lang="stylus" scoped>
   .order  //订单
     width 100%
+    overflow hidden
     .header
       background-color #02a774
       position fixed

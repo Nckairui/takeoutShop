@@ -11,8 +11,11 @@ const px2rem = require('postcss-px2rem')
 function resolve (dir) {
      return path.join(__dirname, dir)
 }
-module.exports = { //只能写vue封装的配置
-  lintOnSave: false, //关闭eslint语法检查
+module.exports = {
+  //只能写vue封装的配置
+  //关闭eslint语法检查
+  lintOnSave: false,
+
   configureWebpack: {// 当前配置需要写入该选项中
     resolve: {
       extensions: ['.js', '.vue', '.json'],
@@ -23,6 +26,7 @@ module.exports = { //只能写vue封装的配置
       }
     }
   },
+
   css: { // 添加postcss配置
     loaderOptions: {
       postcss: {
@@ -32,6 +36,7 @@ module.exports = { //只能写vue封装的配置
       }
     }
   },
+
   devServer: {
     proxy:{
       //路径以/api开头的请求 匹配上了 都通过代理转发请求 再通过代理接受数据 再转发给自己
@@ -48,5 +53,13 @@ module.exports = { //只能写vue封装的配置
 
     }
   },
-  
+
+  pluginOptions: {
+    i18n: {
+      locale: 'zh_CN',
+      fallbackLocale: 'zh_CN',
+      localeDir: 'locales',
+      enableInSFC: false
+    }
+  }
 }
