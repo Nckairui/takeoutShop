@@ -56,7 +56,7 @@
         <br/>
         <mt-button size="small" @click="toggleLocale">切换语言</mt-button>
       </div>
-      <a href="javascript:" class="go_back" @click="$router.back()">
+      <a href="javascript:" class="go_back" @click="$router.replace('/profile')">
         <i class="iconfont icon-jiantou2"></i>
       </a>
     </div>

@@ -56,6 +56,7 @@ export default {
     }
   },
   clearUser({commit}){
+    localStorage.removeItem('token_key');
     commit(SAVE_USER,{});
     commit(SAVE_TOKEN,'');
   }

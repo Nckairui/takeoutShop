@@ -87,13 +87,16 @@
           </span>
         </div>
       </a>
+   
     </section>
+       <mt-button type="danger" :style="{width:'100%'}" @click="logout" v-if="user._id">退出登录</mt-button>
   </section>
 </template>
 
 <script type="text/ecmascript-6">
   import Header from '../../components/Header/Header';
   import {mapState} from 'vuex'
+  import {MessageBox} from 'mint-ui'
   export default {
     components:{
       Header
@@ -101,6 +104,18 @@
     computed:{
       //从状态里面读取数据
       ...mapState(['user','token'])
+    },
+    methods:{
+      logout(){
+        MessageBox.confirm('确认退出登录?').then(() => {
+          //点击确认的回调
+             this.$store.dispatch('clearUser')
+        },()=>{
+          //点击取消的回调
+            console.log('你点击了取消')
+        });
+     
+      }
     }
   }
 </script>
