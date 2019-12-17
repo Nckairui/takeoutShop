@@ -97,7 +97,9 @@
        let interval = setInterval(() => {
          this.codeTime--;
           if(this.codeTime <= 0){
+            
             clearInterval(interval)
+            this.codeTime = 0;
           }
        }, 1000);
        //请求发送验证码
@@ -108,6 +110,7 @@
         }else{
           //停止计时
           this.codeTime = 0;
+          clearInterval(interval)
           MessageBox('提示', msg || '短信发送失败');
         }
       },
